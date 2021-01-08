@@ -499,7 +499,7 @@ VOID MY_ALL_KEYDOWN_UPDATE(VOID)
 {
 	//参考：https://dxlib.xsrv.jp/function/dxfunc_input.html
 
-	char TempKey[256];	//一時的に、現在のキーの入力状態を格納する
+	char TempKey[256];
 
 	//直前のキー入力をとっておく
 	for (int i = 0; i < 256; i++)
