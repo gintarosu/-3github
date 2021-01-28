@@ -4,7 +4,7 @@
 
 //########## マクロ定義 ##########
 #define GAME_WIDTH			960	//画面の横の大きさ
-#define GAME_HEIGHT			540	//画面の縦の大きさ
+#define GAME_HEIGHT			640	//画面の縦の大きさ
 #define GAME_COLOR			32	//画面のカラービット
 
 #define GAME_WINDOW_BAR		0	//タイトルバーはデフォルトにする
@@ -26,6 +26,8 @@
 //画像のパス
 #define IMAGE_BACK_PATH			TEXT(".\\IMAGE\\プレイ.png")	//背景の画像
 #define IMAGE_PLAYER_PATH		TEXT(".\\IMAGE\\stg1.png")	//プレイヤーの画像
+#define IMAGE_PLAYER_PATH		TEXT(".\\IMAGE\\teki.png")	//敵の画像
+
 
 #define IMAGE_TITLE_BK_PATH			TEXT(".\\IMAGE\\タイトル.png")		//タイトル背景の画像
 #define IMAGE_TITLE_ROGO_PATH		TEXT(".\\IMAGE\\ゲームタイトル.png")	//タイトルロゴの画像
@@ -59,12 +61,12 @@
 #define GAME_MAP_YOKO_MAX	15	//マップの横の数
 #define GAME_MAP_KIND_MAX	2	//マップの種類の数
 
-#define GAME_MAP_PATH			TEXT(".\\MAP\\map.png")		//マップの画像
+#define GAME_MAP_PATH			TEXT(".\\IMAGE\\mapchip1.png")		//マップの画像
 
 #define MAP_DIV_WIDTH		64	//画像を分割する幅サイズ
 #define MAP_DIV_HEIGHT		64	//画像を分割する高さサイズ
-#define MAP_DIV_TATE		10	//画像を縦に分割する数
-#define MAP_DIV_YOKO		4	//画像を横に分割する数
+#define MAP_DIV_TATE		32	//画像を縦に分割する数
+#define MAP_DIV_YOKO		41	//画像を横に分割する数
 #define MAP_DIV_NUM	MAP_DIV_TATE * MAP_DIV_YOKO	//画像を分割する総数
 
 //エラーメッセージ
@@ -708,10 +710,10 @@ VOID MY_START_PROC(VOID)
 	}
 
 	//タイトルロゴを拡大
-	if (ImageTitleROGO.rate < ImageTitleROGO.rateMAX)
+	/*if (ImageTitleROGO.rate < ImageTitleROGO.rateMAX)
 	{
 		ImageTitleROGO.rate += IMAGE_TITLE_ROGO_ROTA;
-	}
+	}*/
 
 	//タイトルロゴを移動
 	/*if (ImageTitleROGO.image.x < GAME_WIDTH / 2)
@@ -902,7 +904,7 @@ VOID MY_PLAY_PROC(VOID)
 			StopSoundMem(BGM.handle);	//BGMを止める
 		}
 
-		SetMouseDispFlag(TRUE);			//マウスカーソルを表示
+		SetMouseDispFlag(TRUE);		//マウスカーソルを表示
 
 		GameEndKind = GAME_END_COMP;	//ミッションコンプリート！
 
@@ -958,8 +960,11 @@ VOID MY_PLAY_DRAW(VOID)
 	DrawGraph(ImageBack.image.x, ImageBack.image.y, ImageBack.image.handle, TRUE);
 
 
-	/*プレイヤーのを描画する*/
+	/*プレイヤーを描画する*/
 	DrawGraph(player.image.x, player.image.y, player.image.handle, TRUE);
+
+	//敵の描画
+	/*DrawGraph(teki.image.x, teki.image.y, teki.image.handle, TRUE);*/
 
 
 
@@ -978,7 +983,7 @@ VOID MY_PLAY_DRAW(VOID)
 	}
 
 
-	//プレイヤーのを描画する
+	//プレイヤーを描画する
 	DrawGraph(player.image.x, player.image.y, player.image.handle, TRUE);
 
 }
@@ -1244,8 +1249,8 @@ BOOL MY_LOAD_IMAGE(VOID)
 
 	//マップの画像を分割する
 	int mapRes = LoadDivGraph(
-		GAME_MAP_PATH,										//赤弾のパス
-		MAP_DIV_NUM, MAP_DIV_TATE, MAP_DIV_YOKO,			//赤弾を分割する数
+		GAME_MAP_PATH,										//マップのパス
+		MAP_DIV_NUM, MAP_DIV_TATE, MAP_DIV_YOKO,			//マップを分割する数
 		MAP_DIV_WIDTH, MAP_DIV_HEIGHT,						//画像を分割するの幅と高さ
 		&mapChip.handle[0]);								//分割した画像が入るハンドル
 
