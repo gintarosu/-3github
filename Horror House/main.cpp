@@ -25,8 +25,8 @@
 
 //画像のパス
 #define IMAGE_BACK_PATH			TEXT(".\\IMAGE\\プレイ.png")	//背景の画像
-#define IMAGE_PLAYER_PATH		TEXT(".\\IMAGE\\stg1.png")	//プレイヤーの画像
-#define IMAGE_PLAYER_PATH		TEXT(".\\IMAGE\\teki.png")	//敵の画像
+#define IMAGE_PLAYER_PATH		TEXT(".\\IMAGE\\プレイヤー.png")	//プレイヤーの画像
+//#define IMAGE_TEKI_PATH		TEXT(".\\IMAGE\\teki.png")	//敵の画像
 
 
 #define IMAGE_TITLE_BK_PATH			TEXT(".\\IMAGE\\タイトル.png")		//タイトル背景の画像
@@ -52,19 +52,21 @@
 //音楽のパス
 
 #define MUSIC_BGM_TITLE_PATH		TEXT(".\\MUSIC\\タイトル.mp3")	//タイトルのBGM
-#define MUSIC_BGM_PATH			TEXT(".\\MUSIC\\プレイ.mp3")//プレイBGM		
-#define MUSIC_BGM_COMP_PATH			TEXT(".\\MUSIC\\エンド.mp3")				//コンプリートBGM
-#define MUSIC_BGM_FAIL_PATH			TEXT(".\\MUSIC\\エンド.mp3")					//フォールトBGM
+#define MUSIC_BGM_PATH				TEXT(".\\MUSIC\\プレイ.mp3")	//プレイBGM		
+#define MUSIC_BGM_COMP_PATH			TEXT(".\\MUSIC\\エンド.mp3")	//コンプリートBGM
+#define MUSIC_BGM_FAIL_PATH			TEXT(".\\MUSIC\\エンド.mp3")	//フォールトBGM
 
+#define MAP_PATH		TEXT(".\\IMAGE\\mapchip1.png")			//マップの画像
+#define MAP_PATH_CSV	TEXT(".\\IMAGE\\mapchip1.csv")	
 
 #define GAME_MAP_TATE_MAX	8	//マップの縦の数
 #define GAME_MAP_YOKO_MAX	15	//マップの横の数
 #define GAME_MAP_KIND_MAX	2	//マップの種類の数
 
-#define GAME_MAP_PATH			TEXT(".\\IMAGE\\mapchip1.png")		//マップの画像
+#define GAME_MAP_PATH		TEXT(".\\IMAGE\\mapchip1.png")	//マップの画像
 
-#define MAP_DIV_WIDTH		64	//画像を分割する幅サイズ
-#define MAP_DIV_HEIGHT		64	//画像を分割する高さサイズ
+#define MAP_DIV_WIDTH		32	//画像を分割する幅サイズ
+#define MAP_DIV_HEIGHT		32	//画像を分割する高さサイズ
 #define MAP_DIV_TATE		32	//画像を縦に分割する数
 #define MAP_DIV_YOKO		41	//画像を横に分割する数
 #define MAP_DIV_NUM	MAP_DIV_TATE * MAP_DIV_YOKO	//画像を分割する総数
@@ -79,8 +81,7 @@
 #define MOUSE_R_CLICK_TITLE   TEXT("ゲーム中断")
 #define MOUSE_R_CLICK_CAPTION   TEXT("ゲームを中断し、タイトル画面に戻りますか？")
 
-enum GAME_MAP_KIND
-{
+enum GAME_MAP_KIND{
 	n = -1,	//(NONE)未定
 	k = 14,	//壁
 	t = 9,	//通路
@@ -158,20 +159,6 @@ typedef struct STRUCT_MUSIC
 	char path[PATH_MAX];		//パス
 	int handle;					//ハンドル
 }MUSIC;	//音楽構造体
-
-typedef struct STRUCT_TAMA
-{
-	char path[PATH_MAX];				//パス
-	int x;								//X位置
-	int y;								//Y位置
-	int width;							//幅
-	int height;							//高さ
-	BOOL IsDraw;						//弾を表示できるか
-	int nowImageKind;					//弾の現在の画像
-	int changeImageCnt;					//画像を変えるためのカウント
-	int changeImageCntMAX;				//画像を変えるためのカウント(MAX)
-	int speed;							//スピード
-}TAMA;	//弾の構造体
 
 typedef struct STRUCT_CHARA
 {
@@ -710,17 +697,17 @@ VOID MY_START_PROC(VOID)
 	}
 
 	//タイトルロゴを拡大
-	/*if (ImageTitleROGO.rate < ImageTitleROGO.rateMAX)
+	if (ImageTitleROGO.rate < ImageTitleROGO.rateMAX)
 	{
 		ImageTitleROGO.rate += IMAGE_TITLE_ROGO_ROTA;
-	}*/
+	}
 
 	//タイトルロゴを移動
-	/*if (ImageTitleROGO.image.x < GAME_WIDTH / 2)
+	if (ImageTitleROGO.image.x < GAME_WIDTH / 2)
 	{
 		ImageTitleROGO.image.x += IMAGE_TITLE_ROGO_X_SPEED;
 	}
-	else*/
+	else
 	{
 		//タイトルロゴが移動しきったら
 
@@ -1257,7 +1244,7 @@ BOOL MY_LOAD_IMAGE(VOID)
 	if (mapRes == -1)
 	{
 		//エラーメッセージ表示
-		MessageBox(GetMainWindowHandle(), GAME_MAP_PATH, IMAGE_LOAD_ERR_TITLE, MB_OK);
+		/*MessageBox(GetMainWindowHandle(), GAME_MAP_PATH, IMAGE_LOAD_ERR_TITLE, MB_OK);*/
 		return FALSE;
 	}
 
