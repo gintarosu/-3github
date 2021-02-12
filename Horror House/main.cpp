@@ -24,7 +24,7 @@
 #define IMAGE_LOAD_ERR_TITLE	TEXT("画像読み込みエラー")
 
 //画像のパス
-#define IMAGE_BACK_PATH			TEXT(".\\IMAGE\\プレイ.png")	//背景の画像
+#define IMAGE_BACK_PATH			TEXT(".\\IMAGE\\mapchip1.png")	//背景の画像
 #define IMAGE_PLAYER_PATH		TEXT(".\\IMAGE\\プレイヤー.png")	//プレイヤーの画像
 //#define IMAGE_TEKI_PATH		TEXT(".\\IMAGE\\teki.png")	//敵の画像
 
@@ -57,11 +57,11 @@
 #define MUSIC_BGM_FAIL_PATH			TEXT(".\\MUSIC\\エンド.mp3")	//フォールトBGM
 
 #define MAP_PATH		TEXT(".\\IMAGE\\mapchip1.png")			//マップの画像
-#define MAP_PATH_CSV	TEXT(".\\IMAGE\\mapchip1.csv")	
+/*#define MAP_PATH_CSV	TEXT(".\\IMAGE\\MAP_当たり判定なし.csv")*/	
 
-#define GAME_MAP_TATE_MAX	8	//マップの縦の数
-#define GAME_MAP_YOKO_MAX	15	//マップの横の数
-#define GAME_MAP_KIND_MAX	2	//マップの種類の数
+#define GAME_MAP_TATE_MAX	25	//マップの縦の数
+#define GAME_MAP_YOKO_MAX	30	//マップの横の数
+#define GAME_MAP_KIND_MAX	1	//マップの種類の数
 
 #define GAME_MAP_PATH		TEXT(".\\IMAGE\\mapchip1.png")	//マップの画像
 
@@ -70,6 +70,7 @@
 #define MAP_DIV_TATE		32	//画像を縦に分割する数
 #define MAP_DIV_YOKO		41	//画像を横に分割する数
 #define MAP_DIV_NUM	MAP_DIV_TATE * MAP_DIV_YOKO	//画像を分割する総数
+
 
 //エラーメッセージ
 #define START_ERR_TITLE		TEXT("スタート位置エラー")
@@ -83,10 +84,10 @@
 
 enum GAME_MAP_KIND{
 	n = -1,	//(NONE)未定
-	k = 14,	//壁
-	t = 9,	//通路
-	s = 5,	//スタート
-	g = 3	//ゴール
+	k = 0, //草
+	t = 5,	//通路
+	s = 188,	//スタート
+	g = 189	//ゴール
 };	//マップの種類
 
 
@@ -102,9 +103,8 @@ enum GAME_END {
 };	//ゲームの終了状態
 
 enum CHARA_SPEED {
-	CHARA_SPEED_LOW = 1,
-	CHARA_SPEED_MIDI = 2,
-	CHARA_SPEED_HIGH = 3
+	CHARA_SPEED_PLAYER = 2,
+	CHARA_SPEED_TEKI = 3
 };	//キャラクターのスピード
 
 enum CHARA_RELOAD {
@@ -260,16 +260,41 @@ MUSIC BGM_TITLE;	//タイトルのBGM
 MUSIC BGM_COMP;		//コンプリートのBGM
 MUSIC BGM_FAIL;		//フォールトのBGM
 
+MAPCHIP mapChip1;
+
+MAP map_sita[GAME_MAP_TATE_MAX][GAME_MAP_YOKO_MAX];		//マップデータ（下）
+MAP mapInit_sita[GAME_MAP_TATE_MAX][GAME_MAP_YOKO_MAX];	//最初のマップデータ（下）
+
+MAP map_naka[GAME_MAP_TATE_MAX][GAME_MAP_YOKO_MAX];		//マップデータ（中）
+MAP mapInit_naka[GAME_MAP_TATE_MAX][GAME_MAP_YOKO_MAX];	//最初のマップデータ（中）
+
+MAP map_ue[GAME_MAP_TATE_MAX][GAME_MAP_YOKO_MAX];		//マップデータ（上）
+MAP mapInit_ue[GAME_MAP_TATE_MAX][GAME_MAP_YOKO_MAX];	//最初のマップデータ（上）
+
+
 GAME_MAP_KIND mapData[GAME_MAP_TATE_MAX][GAME_MAP_YOKO_MAX]{
-	//  0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,
-		k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,	// 0
-		k,t,t,k,k,t,t,t,k,t,t,t,k,t,g,	// 1
-		k,t,k,t,t,t,k,t,k,t,k,k,k,t,k,	// 2
-		k,t,k,t,k,t,k,t,k,t,k,k,t,t,k,	// 3
-		k,t,k,t,k,t,k,t,k,t,k,k,t,t,k,	// 4
-		k,t,t,t,k,t,k,k,k,t,k,k,k,t,k,	// 5
-		k,t,k,k,k,t,t,t,t,t,t,t,t,t,k,	// 6
-		k,s,k,k,k,k,k,k,k,k,k,k,k,k,k,	// 7
+	//  0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,
+		k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,g,g,k,k,k,
+		k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,t,t,k,k,k,
+		k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,t,t,k,k,k,
+		k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,t,t,k,k,k,
+		k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,t,t,k,k,k,
+		k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,t,t,k,k,k,
+		k,k,k,k,k,k,k,k,k,k,k,k,k,k,t,t,t,t,t,t,t,t,t,t,t,t,t,k,k,k,
+		k,k,k,k,k,k,k,k,k,k,k,k,k,k,t,t,t,t,t,t,t,t,t,t,t,t,t,k,k,k,
+		k,k,k,k,k,k,k,k,k,k,k,k,k,k,t,t,k,k,k,k,k,k,k,k,k,k,k,k,k,k,
+		k,k,k,k,k,k,k,k,k,k,k,k,k,k,t,t,k,k,k,k,k,k,k,k,k,k,k,k,k,k,
+		k,k,k,k,k,k,k,k,k,k,k,k,k,k,t,t,k,k,k,k,k,k,k,k,k,k,k,k,k,k,
+		k,k,k,k,k,k,k,k,k,k,k,k,k,k,t,t,k,k,k,k,k,k,k,k,k,k,k,k,k,k,
+		k,k,k,k,k,k,k,k,k,k,k,k,k,k,t,t,k,k,k,k,k,k,k,k,k,k,k,k,k,k,
+		k,k,k,k,k,k,k,k,k,k,k,k,k,k,t,t,k,k,k,k,k,k,k,k,k,k,k,k,k,k,
+		k,k,t,t,t,t,t,t,t,t,t,t,t,t,t,t,k,k,k,k,k,k,k,k,k,k,k,k,k,k,
+		k,k,t,t,t,t,t,t,t,t,t,t,t,t,t,t,k,k,k,k,k,k,k,k,k,k,k,k,k,k,
+		k,k,t,t,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,
+		k,k,t,t,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,
+		k,k,t,t,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,
+		k,k,s,t,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k,k
+	
 };	//ゲームのマップ
 
 //ゲームマップの初期化
@@ -815,33 +840,49 @@ VOID MY_PLAY_PROC(VOID)
 		}
 	}
 
-	//画面内にマウスがいれば
-	if (mouse.Point.x >= 0 && mouse.Point.x <= GAME_WIDTH
-		&& mouse.Point.y >= 0 && mouse.Point.y <= GAME_HEIGHT)
-	{
-
-		//マウスの当たる前の位置から、現在位置の差がこの数値以内なら、動ける
-		int MoveValue = 100;
-
-		//マウスの移動量が少ないときに、移動させる
-		if (abs(player.collBeforePt.x - mouse.Point.x) < MoveValue
-			&& abs(player.collBeforePt.y - mouse.Point.y) < MoveValue)
-		{
-			//プレイヤーの中心位置を設定する
-			player.CenterX = mouse.Point.x;
-			player.CenterY = mouse.Point.y;
-		}
-		else
-		{
-			//プレイヤーの中心位置を設定する
-			player.CenterX = player.collBeforePt.x;
-			player.CenterY = player.collBeforePt.y;
-
-			//マウスの位置を設定する
-			SetMousePoint(player.collBeforePt.x, player.collBeforePt.y);
-		}
-
+	if (MY_KEY_DOWN(KEY_INPUT_DOWN)) {
+		player.CenterY += player.speed;
 	}
+
+	if (MY_KEY_DOWN(KEY_INPUT_UP)) {
+		player.CenterY -= player.speed;
+	}
+
+	if (MY_KEY_DOWN(KEY_INPUT_RIGHT)) {
+		player.CenterX += player.speed;
+	}
+
+	if (MY_KEY_DOWN(KEY_INPUT_LEFT)) {
+		player.CenterX -= player.speed;
+	}
+
+	////画面内にマウスがいれば
+	//if (mouse.Point.x >= 0 && mouse.Point.x <= GAME_WIDTH
+	//	&& mouse.Point.y >= 0 && mouse.Point.y <= GAME_HEIGHT)
+	//{
+
+	//	//マウスの当たる前の位置から、現在位置の差がこの数値以内なら、動ける
+	//	int MoveValue = 100;
+
+	//	//マウスの移動量が少ないときに、移動させる
+	//	if (abs(player.collBeforePt.x - mouse.Point.x) < MoveValue
+	//		&& abs(player.collBeforePt.y - mouse.Point.y) < MoveValue)
+	//	{
+	//		//プレイヤーの中心位置を設定する
+	//		player.CenterX = mouse.Point.x;
+	//		player.CenterY = mouse.Point.y;
+	//	}
+	//	else
+	//	{
+	//		//プレイヤーの中心位置を設定する
+	//		player.CenterX = player.collBeforePt.x;
+	//		player.CenterY = player.collBeforePt.y;
+
+	//		//マウスの位置を設定する
+	//		SetMousePoint(player.collBeforePt.x, player.collBeforePt.y);
+	//	}
+
+	//}
 
 	//プレイヤーの当たり判定の設定
 	player.coll.left = player.CenterX - mapChip.width / 2 + 5;
@@ -854,15 +895,15 @@ VOID MY_PLAY_PROC(VOID)
 	//プレイヤーとマップがあたっていたら
 	if (MY_CHECK_MAP1_PLAYER_COLL(player.coll) == TRUE)
 	{
-		SetMousePoint(player.collBeforePt.x, player.collBeforePt.y);
 		IsMove = FALSE;
+
+		player.CenterX = player.collBeforePt.x;
+		player.CenterY = player.collBeforePt.y;
 	}
 
 	if (IsMove == TRUE)
 	{
-		//画面内にマウスがいれば
-		if (mouse.Point.x >= 0 && mouse.Point.x <= GAME_WIDTH
-			&& mouse.Point.y >= 0 && mouse.Point.y <= GAME_HEIGHT)
+		
 		{
 			//プレイヤーの位置に置き換える
 			player.image.x = player.CenterX - player.image.width / 2;
@@ -1229,7 +1270,7 @@ BOOL MY_LOAD_IMAGE(VOID)
 	player.image.y = GAME_HEIGHT / 2 - player.image.height / 2;		//上下中央揃え
 	player.CenterX = player.image.x + player.image.width / 2;		//画像の横の中心を探す
 	player.CenterY = player.image.y + player.image.height / 2;		//画像の縦の中心を探す
-	player.speed = CHARA_SPEED_LOW;									//スピードを設定
+	player.speed = CHARA_SPEED_PLAYER;									//スピードを設定
 
 
 
@@ -1244,7 +1285,7 @@ BOOL MY_LOAD_IMAGE(VOID)
 	if (mapRes == -1)
 	{
 		//エラーメッセージ表示
-		/*MessageBox(GetMainWindowHandle(), GAME_MAP_PATH, IMAGE_LOAD_ERR_TITLE, MB_OK);*/
+		MessageBox(GetMainWindowHandle(), GAME_MAP_PATH, IMAGE_LOAD_ERR_TITLE, MB_OK);
 		return FALSE;
 	}
 
@@ -1324,8 +1365,7 @@ BOOL MY_CHECK_MAP1_PLAYER_COLL(RECT player)
 			//プレイヤーとマップが当たっているとき
 			if (MY_CHECK_RECT_COLL(player, mapColl[tate][yoko]) == TRUE)
 			{
-				//壁のときは、プレイヤーとマップが当たっている
-				if (map[tate][yoko].kind == k) { return TRUE; }
+				if (map[tate][yoko].kind == k) { return FALSE; }
 			}
 		}
 	}
